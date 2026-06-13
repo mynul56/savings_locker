@@ -9,6 +9,9 @@ import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 import '../../domain/repositories/auth_repository.dart';
 
+import '../../domain/usecases/update_profile_name_usecase.dart';
+import '../../domain/usecases/update_password_usecase.dart';
+
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
@@ -19,18 +22,24 @@ class AuthenticationBloc
   final SignUpUseCase signUpUseCase;
   final LogoutUseCase logoutUseCase;
   final AuthRepository authRepository;
+  final UpdateProfileNameUseCase updateProfileNameUseCase;
+  final UpdatePasswordUseCase updatePasswordUseCase;
 
   AuthenticationBloc({
     required this.signInUseCase,
     required this.signUpUseCase,
     required this.logoutUseCase,
     required this.authRepository,
+    required this.updateProfileNameUseCase,
+    required this.updatePasswordUseCase,
   }) : super(AuthenticationInitial()) {
     on<AppStarted>(_onAppStarted);
     on<SignInRequested>(_onSignInRequested);
     on<SignUpRequested>(_onSignUpRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<ForgotPasswordRequested>(_onForgotPasswordRequested);
+    on<UpdateProfileNameRequested>(_onUpdateProfileNameRequested);
+    on<UpdatePasswordRequested>(_onUpdatePasswordRequested);
   }
 
   Future<void> _onAppStarted(
@@ -102,5 +111,38 @@ class AuthenticationBloc
       // Just remain in unauthenticated or emit a specific success state
       emit(AuthenticationUnauthenticated());
     });
+  }
+
+  Future<void> _onUpdateProfileNameRequested(
+    UpdateProfileNameRequested event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AuthenticationAuthenticated) {
+      final updateResult = await updateProfileNameUseCase(event.fullName);
+      updateResult.fold(
+        (failure) => emit(AuthenticationFailure(failure.message)),
+        (user) => emit(AuthenticationAuthenticated(user)),
+      );
+    }
+  }
+
+  Future<void> _onUpdatePasswordRequested(
+    UpdatePasswordRequested event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AuthenticationAuthenticated) {
+      final updateResult = await updatePasswordUseCase(
+        UpdatePasswordParams(
+          currentPassword: event.currentPassword,
+          newPassword: event.newPassword,
+        ),
+      );
+      updateResult.fold(
+        (failure) => emit(AuthenticationFailure(failure.message)),
+        (_) => emit(currentState), // Just stay authenticated
+      );
+    }
   }
 }

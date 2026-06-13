@@ -19,6 +19,9 @@ import '../features/authentication/domain/usecases/sign_in_usecase.dart';
 import '../features/authentication/domain/usecases/sign_up_usecase.dart';
 import '../features/authentication/presentation/bloc/authentication_bloc.dart';
 
+import '../features/authentication/domain/usecases/update_profile_name_usecase.dart';
+import '../features/authentication/domain/usecases/update_password_usecase.dart';
+
 // Savings
 import '../features/savings/data/datasources/savings_remote_data_source.dart';
 import '../features/savings/data/repositories/savings_repository_impl.dart';
@@ -73,6 +76,8 @@ extension GetItInjectableX on _i1.GetIt {
     gh.factory<SignInUseCase>(() => SignInUseCase(gh<AuthRepository>()));
     gh.factory<SignUpUseCase>(() => SignUpUseCase(gh<AuthRepository>()));
     gh.factory<LogoutUseCase>(() => LogoutUseCase(gh<AuthRepository>()));
+    gh.factory<UpdateProfileNameUseCase>(() => UpdateProfileNameUseCase(gh<AuthRepository>()));
+    gh.factory<UpdatePasswordUseCase>(() => UpdatePasswordUseCase(gh<AuthRepository>()));
 
     gh.factory<AuthenticationBloc>(
       () => AuthenticationBloc(
@@ -80,6 +85,8 @@ extension GetItInjectableX on _i1.GetIt {
         signUpUseCase: gh<SignUpUseCase>(),
         logoutUseCase: gh<LogoutUseCase>(),
         authRepository: gh<AuthRepository>(),
+        updateProfileNameUseCase: gh<UpdateProfileNameUseCase>(),
+        updatePasswordUseCase: gh<UpdatePasswordUseCase>(),
       ),
     );
 

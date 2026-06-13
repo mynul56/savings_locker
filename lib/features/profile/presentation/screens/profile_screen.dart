@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../authentication/presentation/bloc/authentication_bloc.dart';
@@ -54,13 +55,23 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             _buildSectionTitle(context, 'Settings'),
-            _buildListTile(context, 'Account Settings', LucideIcons.settings),
-            _buildListTile(context, 'Notifications', LucideIcons.bell),
-            _buildListTile(context, 'Security', LucideIcons.shield),
+            _buildListTile(context, 'Account Settings', LucideIcons.settings, () {
+              context.push('/account-settings');
+            }),
+            _buildListTile(context, 'Notifications', LucideIcons.bell, () {
+              context.push('/notifications');
+            }),
+            _buildListTile(context, 'Security', LucideIcons.shield, () {
+              context.push('/security');
+            }),
             const SizedBox(height: 24),
             _buildSectionTitle(context, 'About'),
-            _buildListTile(context, 'Privacy Policy', LucideIcons.fileText),
-            _buildListTile(context, 'Terms of Service', LucideIcons.file),
+            _buildListTile(context, 'Privacy Policy', LucideIcons.fileText, () {
+              context.push('/legal?title=Privacy%20Policy');
+            }),
+            _buildListTile(context, 'Terms of Service', LucideIcons.file, () {
+              context.push('/legal?title=Terms%20of%20Service');
+            }),
             const SizedBox(height: 32),
             ListTile(
               leading: Icon(LucideIcons.logOut, color: colorScheme.error),
@@ -97,7 +108,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(BuildContext context, String title, IconData icon) {
+  Widget _buildListTile(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       leading: Icon(
         icon,
@@ -106,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: const Icon(LucideIcons.chevronRight, size: 20),
       contentPadding: EdgeInsets.zero,
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }

@@ -42,3 +42,22 @@ class ForgotPasswordRequested extends AuthenticationEvent {
 }
 
 class VerifyEmailRequested extends AuthenticationEvent {}
+
+class UpdateProfileNameRequested extends AuthenticationEvent {
+  final String fullName;
+
+  const UpdateProfileNameRequested(this.fullName);
+
+  @override
+  List<Object> get props => [fullName];
+}
+
+class UpdatePasswordRequested extends AuthenticationEvent {
+  final String currentPassword;
+  final String newPassword;
+
+  const UpdatePasswordRequested(this.currentPassword, this.newPassword);
+
+  @override
+  List<Object> get props => [currentPassword, newPassword];
+}

@@ -11,6 +11,8 @@ abstract class AuthRemoteDataSource {
   Future<void> logout();
   Future<UserModel?> getCurrentUser();
   Future<void> resetPassword(String email);
+  Future<UserModel> updateProfileName(String fullName);
+  Future<void> updatePassword(String currentPassword, String newPassword);
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
@@ -130,6 +132,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw AuthException(e.message ?? 'Failed to send reset email');
+    } catch (e) {
+      throw AuthException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> updateProfileName(String fullName) async {
+    try {
+      final currentUser = firebaseAuth.currentUser;
+      if (currentUser == null) throw const AuthException('Not authenticated');
+
+      await firestore.collection('users').doc(currentUser.uid).update({
+        'fullName': fullName,
+      });
+
+      final doc = await firestore.collection('users').doc(currentUser.uid).get();
+      return UserModel.fromJson(doc.data()!);
+    } catch (e) {
+      throw AuthException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updatePassword(String currentPassword, String newPassword) async {
+    try {
+      final currentUser = firebaseAuth.currentUser;
+      if (currentUser == null || currentUser.email == null) {
+        throw const AuthException('Not authenticated');
+      }
+
+      // Re-authenticate
+      final cred = EmailAuthProvider.credential(
+        email: currentUser.email!,
+        password: currentPassword,
+      );
+      await currentUser.reauthenticateWithCredential(cred);
+
+      // Update password
+      await currentUser.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(e.message ?? 'Failed to update password');
     } catch (e) {
       throw AuthException(e.toString());
     }

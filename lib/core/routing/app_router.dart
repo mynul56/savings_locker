@@ -8,6 +8,11 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/savings/presentation/screens/create_deposit_screen.dart';
 import '../../features/goals/presentation/screens/create_goal_screen.dart';
 
+import '../../features/profile/presentation/screens/account_settings_screen.dart';
+import '../../features/profile/presentation/screens/notifications_settings_screen.dart';
+import '../../features/profile/presentation/screens/security_settings_screen.dart';
+import '../../features/profile/presentation/screens/legal_text_screen.dart';
+
 import 'dart:async';
 import '../../features/authentication/presentation/bloc/authentication_bloc.dart';
 
@@ -79,6 +84,25 @@ class AppRouter {
         GoRoute(
           path: '/create-goal',
           builder: (context, state) => const CreateGoalScreen(),
+        ),
+        GoRoute(
+          path: '/account-settings',
+          builder: (context, state) => const AccountSettingsScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsSettingsScreen(),
+        ),
+        GoRoute(
+          path: '/security',
+          builder: (context, state) => const SecuritySettingsScreen(),
+        ),
+        GoRoute(
+          path: '/legal',
+          builder: (context, state) {
+            final title = state.uri.queryParameters['title'] ?? 'Legal';
+            return LegalTextScreen(title: title);
+          },
         ),
       ],
     );
