@@ -34,13 +34,13 @@ class GoalEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        goalId,
-        ownerUid,
-        title,
-        targetAmount,
-        currentAmount,
-        goalType,
-        targetDate,
-        createdAt,
-      ];
+    goalId,
+    ownerUid,
+    title,
+    targetAmount,
+    currentAmount,
+    goalType,
+    targetDate,
+    createdAt,
+  ];
 }

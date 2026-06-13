@@ -39,7 +39,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             onPressed: () {
               context.push('/create-deposit');
             },
-          )
+          ),
         ],
       ),
       body: BlocBuilder<SavingsBloc, SavingsState>(
@@ -47,11 +47,19 @@ class _SavingsScreenState extends State<SavingsScreen> {
           if (state is SavingsLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is SavingsFailure) {
-            return Center(child: Text(state.message, style: TextStyle(color: colorScheme.error)));
+            return Center(
+              child: Text(
+                state.message,
+                style: TextStyle(color: colorScheme.error),
+              ),
+            );
           } else if (state is SavingsLoaded) {
             if (state.deposits.isEmpty) {
               return Center(
-                child: Text('No deposits yet. Start saving!', style: theme.textTheme.bodyLarge),
+                child: Text(
+                  'No deposits yet. Start saving!',
+                  style: theme.textTheme.bodyLarge,
+                ),
               );
             }
             return ListView.builder(
@@ -73,7 +81,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isLocked = deposit.isLocked;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -89,24 +97,33 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isLocked ? colorScheme.primary.withValues(alpha: 0.1) : colorScheme.secondary.withValues(alpha: 0.1),
+                        color: isLocked
+                            ? colorScheme.primary.withValues(alpha: 0.1)
+                            : colorScheme.secondary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         isLocked ? LucideIcons.lock : LucideIcons.wallet,
-                        color: isLocked ? colorScheme.primary : colorScheme.secondary,
+                        color: isLocked
+                            ? colorScheme.primary
+                            : colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       isLocked ? 'Locked Savings' : 'Flexible Savings',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
                 Text(
                   NumberFormat.currency(symbol: '\$').format(deposit.amount),
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -114,11 +131,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
             if (isLocked && deposit.lockUntil != null)
               Row(
                 children: [
-                  Icon(LucideIcons.calendarClock, size: 16, color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                  Icon(
+                    LucideIcons.calendarClock,
+                    size: 16,
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'Unlocks on ${DateFormat.yMMMd().format(deposit.lockUntil!)}',
-                    style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ],
               ),
@@ -127,10 +150,13 @@ class _SavingsScreenState extends State<SavingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: deposit.status == 'active' 
-                        ? Colors.green.withValues(alpha: 0.1) 
+                    color: deposit.status == 'active'
+                        ? Colors.green.withValues(alpha: 0.1)
                         : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -139,7 +165,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: deposit.status == 'active' ? Colors.green : Colors.grey,
+                      color: deposit.status == 'active'
+                          ? Colors.green
+                          : Colors.grey,
                     ),
                   ),
                 ),
@@ -147,11 +175,21 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   TextButton(
                     onPressed: deposit.canWithdraw
                         ? () {
-                            final uid = context.read<AuthenticationBloc>().state is AuthenticationAuthenticated
-                                ? (context.read<AuthenticationBloc>().state as AuthenticationAuthenticated).user.uid
+                            final uid =
+                                context.read<AuthenticationBloc>().state
+                                    is AuthenticationAuthenticated
+                                ? (context.read<AuthenticationBloc>().state
+                                          as AuthenticationAuthenticated)
+                                      .user
+                                      .uid
                                 : null;
                             if (uid != null) {
-                              context.read<SavingsBloc>().add(WithdrawDeposit(uid: uid, depositId: deposit.depositId));
+                              context.read<SavingsBloc>().add(
+                                WithdrawDeposit(
+                                  uid: uid,
+                                  depositId: deposit.depositId,
+                                ),
+                              );
                             }
                           }
                         : null,

@@ -44,65 +44,93 @@ extension GetItInjectableX on _i1.GetIt {
   }) {
     final gh = _i2.GetItHelper(this, environment, environmentFilter);
     final firebaseInjectableModule = _$FirebaseInjectableModule();
-    
-    gh.lazySingleton<_i3.FirebaseAuth>(() => firebaseInjectableModule.firebaseAuth);
-    gh.lazySingleton<_i4.FirebaseFirestore>(() => firebaseInjectableModule.firestore);
-    gh.lazySingleton<_i5.FirebaseStorage>(() => firebaseInjectableModule.firebaseStorage);
-    gh.lazySingleton<_i6.FirebaseMessaging>(() => firebaseInjectableModule.firebaseMessaging);
+
+    gh.lazySingleton<_i3.FirebaseAuth>(
+      () => firebaseInjectableModule.firebaseAuth,
+    );
+    gh.lazySingleton<_i4.FirebaseFirestore>(
+      () => firebaseInjectableModule.firestore,
+    );
+    gh.lazySingleton<_i5.FirebaseStorage>(
+      () => firebaseInjectableModule.firebaseStorage,
+    );
+    gh.lazySingleton<_i6.FirebaseMessaging>(
+      () => firebaseInjectableModule.firebaseMessaging,
+    );
 
     // Auth Layer
-    gh.lazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(
-          firebaseAuth: gh<_i3.FirebaseAuth>(),
-          firestore: gh<_i4.FirebaseFirestore>(),
-        ));
-        
-    gh.lazySingleton<AuthRepository>(() => AuthRepositoryImpl(
-          remoteDataSource: gh<AuthRemoteDataSource>(),
-        ));
-        
+    gh.lazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(
+        firebaseAuth: gh<_i3.FirebaseAuth>(),
+        firestore: gh<_i4.FirebaseFirestore>(),
+      ),
+    );
+
+    gh.lazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(remoteDataSource: gh<AuthRemoteDataSource>()),
+    );
+
     gh.factory<SignInUseCase>(() => SignInUseCase(gh<AuthRepository>()));
     gh.factory<SignUpUseCase>(() => SignUpUseCase(gh<AuthRepository>()));
     gh.factory<LogoutUseCase>(() => LogoutUseCase(gh<AuthRepository>()));
-    
-    gh.factory<AuthenticationBloc>(() => AuthenticationBloc(
-          signInUseCase: gh<SignInUseCase>(),
-          signUpUseCase: gh<SignUpUseCase>(),
-          logoutUseCase: gh<LogoutUseCase>(),
-          authRepository: gh<AuthRepository>(),
-        ));
+
+    gh.factory<AuthenticationBloc>(
+      () => AuthenticationBloc(
+        signInUseCase: gh<SignInUseCase>(),
+        signUpUseCase: gh<SignUpUseCase>(),
+        logoutUseCase: gh<LogoutUseCase>(),
+        authRepository: gh<AuthRepository>(),
+      ),
+    );
 
     // Savings Layer
-    gh.lazySingleton<SavingsRemoteDataSource>(() => SavingsRemoteDataSourceImpl(
-          firestore: gh<_i4.FirebaseFirestore>(),
-        ));
-    gh.lazySingleton<SavingsRepository>(() => SavingsRepositoryImpl(
-          remoteDataSource: gh<SavingsRemoteDataSource>(),
-        ));
-    gh.factory<LoadDepositsUseCase>(() => LoadDepositsUseCase(gh<SavingsRepository>()));
-    gh.factory<CreateDepositUseCase>(() => CreateDepositUseCase(gh<SavingsRepository>()));
-    gh.factory<WithdrawDepositUseCase>(() => WithdrawDepositUseCase(gh<SavingsRepository>()));
-    gh.factory<SavingsBloc>(() => SavingsBloc(
-          loadDepositsUseCase: gh<LoadDepositsUseCase>(),
-          createDepositUseCase: gh<CreateDepositUseCase>(),
-          withdrawDepositUseCase: gh<WithdrawDepositUseCase>(),
-        ));
+    gh.lazySingleton<SavingsRemoteDataSource>(
+      () => SavingsRemoteDataSourceImpl(firestore: gh<_i4.FirebaseFirestore>()),
+    );
+    gh.lazySingleton<SavingsRepository>(
+      () => SavingsRepositoryImpl(
+        remoteDataSource: gh<SavingsRemoteDataSource>(),
+      ),
+    );
+    gh.factory<LoadDepositsUseCase>(
+      () => LoadDepositsUseCase(gh<SavingsRepository>()),
+    );
+    gh.factory<CreateDepositUseCase>(
+      () => CreateDepositUseCase(gh<SavingsRepository>()),
+    );
+    gh.factory<WithdrawDepositUseCase>(
+      () => WithdrawDepositUseCase(gh<SavingsRepository>()),
+    );
+    gh.factory<SavingsBloc>(
+      () => SavingsBloc(
+        loadDepositsUseCase: gh<LoadDepositsUseCase>(),
+        createDepositUseCase: gh<CreateDepositUseCase>(),
+        withdrawDepositUseCase: gh<WithdrawDepositUseCase>(),
+      ),
+    );
 
     // Goals Layer
-    gh.lazySingleton<GoalsRemoteDataSource>(() => GoalsRemoteDataSourceImpl(
-          firestore: gh<_i4.FirebaseFirestore>(),
-        ));
-    gh.lazySingleton<GoalsRepository>(() => GoalsRepositoryImpl(
-          remoteDataSource: gh<GoalsRemoteDataSource>(),
-        ));
+    gh.lazySingleton<GoalsRemoteDataSource>(
+      () => GoalsRemoteDataSourceImpl(firestore: gh<_i4.FirebaseFirestore>()),
+    );
+    gh.lazySingleton<GoalsRepository>(
+      () => GoalsRepositoryImpl(remoteDataSource: gh<GoalsRemoteDataSource>()),
+    );
     gh.factory<LoadGoalsUseCase>(() => LoadGoalsUseCase(gh<GoalsRepository>()));
-    gh.factory<CreateGoalUseCase>(() => CreateGoalUseCase(gh<GoalsRepository>()));
-    gh.factory<ContributeGoalUseCase>(() => ContributeGoalUseCase(gh<GoalsRepository>()));
-    gh.factory<GoalsBloc>(() => GoalsBloc(
-          loadGoalsUseCase: gh<LoadGoalsUseCase>(),
-          createGoalUseCase: gh<CreateGoalUseCase>(),
-          contributeGoalUseCase: gh<ContributeGoalUseCase>(),
-        ));
-        
+    gh.factory<CreateGoalUseCase>(
+      () => CreateGoalUseCase(gh<GoalsRepository>()),
+    );
+    gh.factory<ContributeGoalUseCase>(
+      () => ContributeGoalUseCase(gh<GoalsRepository>()),
+    );
+    gh.factory<GoalsBloc>(
+      () => GoalsBloc(
+        loadGoalsUseCase: gh<LoadGoalsUseCase>(),
+        createGoalUseCase: gh<CreateGoalUseCase>(),
+        contributeGoalUseCase: gh<ContributeGoalUseCase>(),
+      ),
+    );
+
     return this;
   }
 }

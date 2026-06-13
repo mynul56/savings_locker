@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "970916364764",
+    "project_id": "savinglocker-f5577",
+    "storage_bucket": "savinglocker-f5577.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970916364764:android:e51dcd1cf3f5c1454a0f19",
+        "android_client_info": {
+          "package_name": "com.betopia.locksave"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0Z5adboa8TW9wGRlzE2T5j2FJ8shwuSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

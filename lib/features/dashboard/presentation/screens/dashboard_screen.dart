@@ -47,14 +47,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icon(LucideIcons.piggyBank),
             label: 'Savings',
           ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.target),
-            label: 'Goals',
-          ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.user),
-            label: 'Profile',
-          ),
+          NavigationDestination(icon: Icon(LucideIcons.target), label: 'Goals'),
+          NavigationDestination(icon: Icon(LucideIcons.user), label: 'Profile'),
         ],
       ),
     );

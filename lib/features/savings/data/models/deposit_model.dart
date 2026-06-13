@@ -17,7 +17,9 @@ class DepositModel extends DepositEntity {
       ownerUid: json['ownerUid'] as String,
       amount: (json['amount'] as num).toDouble(),
       isLocked: json['isLocked'] as bool,
-      lockUntil: json['lockUntil'] != null ? DateTime.parse(json['lockUntil'] as String) : null,
+      lockUntil: json['lockUntil'] != null
+          ? DateTime.parse(json['lockUntil'] as String)
+          : null,
       status: json['status'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );

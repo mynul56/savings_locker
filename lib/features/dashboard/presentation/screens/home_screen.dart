@@ -71,16 +71,21 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 32),
-            Text(
-              'Quick Actions',
-              style: theme.textTheme.titleLarge,
-            ),
+            Text('Quick Actions', style: theme.textTheme.titleLarge),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildActionButton(context, 'Deposit', LucideIcons.arrowDownToLine),
-                _buildActionButton(context, 'Withdraw', LucideIcons.arrowUpFromLine),
+                _buildActionButton(
+                  context,
+                  'Deposit',
+                  LucideIcons.arrowDownToLine,
+                ),
+                _buildActionButton(
+                  context,
+                  'Withdraw',
+                  LucideIcons.arrowUpFromLine,
+                ),
                 _buildActionButton(context, 'New Goal', LucideIcons.target),
                 _buildActionButton(context, 'History', LucideIcons.history),
               ],
@@ -89,14 +94,8 @@ class HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Upcoming Maturities',
-                  style: theme.textTheme.titleLarge,
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('See All'),
-                ),
+                Text('Upcoming Maturities', style: theme.textTheme.titleLarge),
+                TextButton(onPressed: () {}, child: const Text('See All')),
               ],
             ),
             const SizedBox(height: 16),
@@ -108,11 +107,22 @@ class HomeScreen extends StatelessWidget {
                     color: colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(LucideIcons.calendarClock, color: colorScheme.primary),
+                  child: Icon(
+                    LucideIcons.calendarClock,
+                    color: colorScheme.primary,
+                  ),
                 ),
-                title: const Text('Car Downpayment', style: TextStyle(fontWeight: FontWeight.w600)),
+                title: const Text(
+                  'Car Downpayment',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 subtitle: const Text('Unlocks in 14 days'),
-                trailing: Text('\$5,000', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                trailing: Text(
+                  '\$5,000',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
@@ -175,9 +185,9 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
       ],
     );

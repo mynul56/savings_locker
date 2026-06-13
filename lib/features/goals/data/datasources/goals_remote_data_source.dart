@@ -38,7 +38,9 @@ class GoalsRemoteDataSourceImpl implements GoalsRemoteDataSource {
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data())).toList();
+      return snapshot.docs
+          .map((doc) => GoalModel.fromJson(doc.data()))
+          .toList();
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -127,7 +129,6 @@ class GoalsRemoteDataSourceImpl implements GoalsRemoteDataSource {
         'description': 'Contribution to ${goal.title}',
         'createdAt': DateTime.now().toIso8601String(),
       });
-      
     } catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(e.toString());

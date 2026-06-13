@@ -27,12 +27,12 @@ class DepositEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        depositId,
-        ownerUid,
-        amount,
-        isLocked,
-        lockUntil,
-        status,
-        createdAt,
-      ];
+    depositId,
+    ownerUid,
+    amount,
+    isLocked,
+    lockUntil,
+    status,
+    createdAt,
+  ];
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -15,7 +19,14 @@ void main() async {
 
   // Initialize Firebase (Catching error if not configured yet to allow UI development)
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
   } catch (e) {
     debugPrint('Firebase not configured yet: $e');
   }
@@ -27,22 +38,37 @@ void main() async {
   runApp(const LockSaveApp());
 }
 
-class LockSaveApp extends StatelessWidget {
+class LockSaveApp extends StatefulWidget {
   const LockSaveApp({super.key});
+
+  @override
+  State<LockSaveApp> createState() => _LockSaveAppState();
+}
+
+class _LockSaveAppState extends State<LockSaveApp> {
+  late final AuthenticationBloc _authBloc;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _authBloc = sl<AuthenticationBloc>()..add(AppStarted());
+    _router = AppRouter.createRouter(_authBloc);
+  }
+
+  @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => sl<AuthenticationBloc>()..add(AppStarted()),
-        ),
-        BlocProvider(
-          create: (_) => sl<SavingsBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => sl<GoalsBloc>(),
-        ),
+        BlocProvider.value(value: _authBloc),
+        BlocProvider(create: (_) => sl<SavingsBloc>()),
+        BlocProvider(create: (_) => sl<GoalsBloc>()),
       ],
       child: MaterialApp.router(
         title: 'LockSave',
@@ -50,9 +76,8 @@ class LockSaveApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
-        routerConfig: AppRouter.router,
+        routerConfig: _router,
       ),
     );
   }
 }
-

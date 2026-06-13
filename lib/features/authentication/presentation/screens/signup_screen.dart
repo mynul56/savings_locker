@@ -22,12 +22,12 @@ class _SignupScreenState extends State<SignupScreen> {
   void _onSignup() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthenticationBloc>().add(
-            SignUpRequested(
-              _emailController.text.trim(),
-              _passwordController.text,
-              _fullNameController.text.trim(),
-            ),
-          );
+        SignUpRequested(
+          _emailController.text.trim(),
+          _passwordController.text,
+          _fullNameController.text.trim(),
+        ),
+      );
     }
   }
 
@@ -113,7 +113,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           prefixIcon: Icon(LucideIcons.mail),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty || !value.contains('@')) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              !value.contains('@')) {
                             return 'Please enter a valid email';
                           }
                           return null;
@@ -128,7 +130,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           prefixIcon: const Icon(LucideIcons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
+                              _obscurePassword
+                                  ? LucideIcons.eye
+                                  : LucideIcons.eyeOff,
                             ),
                             onPressed: () {
                               setState(() {
@@ -146,7 +150,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       const SizedBox(height: 32),
                       ElevatedButton(
-                        onPressed: state is AuthenticationLoading ? null : _onSignup,
+                        onPressed: state is AuthenticationLoading
+                            ? null
+                            : _onSignup,
                         child: state is AuthenticationLoading
                             ? const SizedBox(
                                 height: 20,
@@ -164,7 +170,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         children: [
                           Text(
                             "Already have an account?",
-                            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                            style: TextStyle(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
                           TextButton(
                             onPressed: () => context.pop(),

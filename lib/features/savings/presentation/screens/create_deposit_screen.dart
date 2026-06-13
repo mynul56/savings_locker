@@ -28,7 +28,9 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
 
     if (_isLocked && _lockUntil == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a maturity date for locked savings')),
+        const SnackBar(
+          content: Text('Please select a maturity date for locked savings'),
+        ),
       );
       return;
     }
@@ -36,13 +38,13 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
     final authState = context.read<AuthenticationBloc>().state;
     if (authState is AuthenticationAuthenticated) {
       context.read<SavingsBloc>().add(
-            CreateDeposit(
-              uid: authState.user.uid,
-              amount: amount,
-              isLocked: _isLocked,
-              lockUntil: _isLocked ? _lockUntil : null,
-            ),
-          );
+        CreateDeposit(
+          uid: authState.user.uid,
+          amount: amount,
+          isLocked: _isLocked,
+          lockUntil: _isLocked ? _lockUntil : null,
+        ),
+      );
     }
   }
 
@@ -61,9 +63,9 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
           if (state is SavingsLoaded) {
             context.pop(); // Go back on success
           } else if (state is SavingsFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Padding(
@@ -73,7 +75,9 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
             children: [
               TextField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Amount',
                   prefixText: '\$ ',
@@ -82,7 +86,9 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
               const SizedBox(height: 24),
               SwitchListTile(
                 title: const Text('Lock Savings?'),
-                subtitle: const Text('Locked savings cannot be withdrawn until maturity.'),
+                subtitle: const Text(
+                  'Locked savings cannot be withdrawn until maturity.',
+                ),
                 value: _isLocked,
                 onChanged: (val) {
                   setState(() {
@@ -94,16 +100,20 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
               if (_isLocked) ...[
                 const SizedBox(height: 16),
                 ListTile(
-                  title: Text(_lockUntil == null
-                      ? 'Select Maturity Date'
-                      : 'Unlocks on: ${_lockUntil!.toLocal().toString().split(' ')[0]}'),
+                  title: Text(
+                    _lockUntil == null
+                        ? 'Select Maturity Date'
+                        : 'Unlocks on: ${_lockUntil!.toLocal().toString().split(' ')[0]}',
+                  ),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
                     final date = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now().add(const Duration(days: 30)),
                       firstDate: DateTime.now().add(const Duration(days: 1)),
-                      lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
+                      lastDate: DateTime.now().add(
+                        const Duration(days: 365 * 10),
+                      ),
                     );
                     if (date != null) {
                       setState(() {

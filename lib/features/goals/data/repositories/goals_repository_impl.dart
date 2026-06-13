@@ -80,7 +80,11 @@ class GoalsRepositoryImpl implements GoalsRepository {
     required double amount,
   }) async {
     try {
-      await remoteDataSource.contributeGoal(uid: uid, goalId: goalId, amount: amount);
+      await remoteDataSource.contributeGoal(
+        uid: uid,
+        goalId: goalId,
+        amount: amount,
+      );
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

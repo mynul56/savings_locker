@@ -21,11 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLogin() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthenticationBloc>().add(
-            SignInRequested(
-              _emailController.text.trim(),
-              _passwordController.text,
-            ),
-          );
+        SignInRequested(_emailController.text.trim(), _passwordController.text),
+      );
     }
   }
 
@@ -34,6 +31,54 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _showForgotPasswordDialog() {
+    final emailController = TextEditingController(text: _emailController.text);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Enter your email address to receive a password reset link.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: 'Email Address',
+                prefixIcon: Icon(LucideIcons.mail),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final email = emailController.text.trim();
+              if (email.isNotEmpty && email.contains('@')) {
+                context.read<AuthenticationBloc>().add(
+                  ForgotPasswordRequested(email),
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Password reset email sent')),
+                );
+              }
+            },
+            child: const Text('Send Link'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -97,7 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           prefixIcon: Icon(LucideIcons.mail),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty || !value.contains('@')) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              !value.contains('@')) {
                             return 'Please enter a valid email';
                           }
                           return null;
@@ -112,7 +159,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           prefixIcon: const Icon(LucideIcons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
+                              _obscurePassword
+                                  ? LucideIcons.eye
+                                  : LucideIcons.eyeOff,
                             ),
                             onPressed: () {
                               setState(() {
@@ -132,15 +181,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {
-                            // TODO: Forgot password flow
-                          },
+                          onPressed: _showForgotPasswordDialog,
                           child: const Text('Forgot Password?'),
                         ),
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
-                        onPressed: state is AuthenticationLoading ? null : _onLogin,
+                        onPressed: state is AuthenticationLoading
+                            ? null
+                            : _onLogin,
                         child: state is AuthenticationLoading
                             ? const SizedBox(
                                 height: 20,
@@ -158,7 +207,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Text(
                             "Don't have an account?",
-                            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                            style: TextStyle(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
                           TextButton(
                             onPressed: () => context.push('/signup'),

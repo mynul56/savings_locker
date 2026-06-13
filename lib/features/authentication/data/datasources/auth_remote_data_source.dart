@@ -30,13 +30,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      
+
       if (userCredential.user == null) {
         throw const AuthException('User not found after sign in.');
       }
 
       final uid = userCredential.user!.uid;
-      
+
       // Update last login
       await firestore.collection('users').doc(uid).update({
         'lastLogin': DateTime.now().toIso8601String(),
@@ -56,7 +56,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> signUp(String email, String password, String fullName) async {
+  Future<UserModel> signUp(
+    String email,
+    String password,
+    String fullName,
+  ) async {
     try {
       final userCredential = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -103,8 +107,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final currentUser = firebaseAuth.currentUser;
       if (currentUser == null) return null;
 
-      final doc = await firestore.collection('users').doc(currentUser.uid).get();
-      
+      final doc = await firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
       if (!doc.exists || doc.data() == null) {
         // Log out the user if their firestore doc is missing for consistency
         await firebaseAuth.signOut();

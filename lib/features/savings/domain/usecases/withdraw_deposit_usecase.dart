@@ -14,7 +14,10 @@ class WithdrawDepositUseCase implements UseCase<void, WithdrawDepositParams> {
 
   @override
   Future<Either<Failure, void>> call(WithdrawDepositParams params) async {
-    return await repository.withdrawDeposit(uid: params.uid, depositId: params.depositId);
+    return await repository.withdrawDeposit(
+      uid: params.uid,
+      depositId: params.depositId,
+    );
   }
 }
 

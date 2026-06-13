@@ -23,23 +23,23 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     final amount = double.tryParse(_amountController.text) ?? 0.0;
 
     if (title.isEmpty || amount <= 0 || _targetDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return;
     }
 
     final authState = context.read<AuthenticationBloc>().state;
     if (authState is AuthenticationAuthenticated) {
       context.read<GoalsBloc>().add(
-            CreateGoal(
-              uid: authState.user.uid,
-              title: title,
-              targetAmount: amount,
-              goalType: _goalType,
-              targetDate: _targetDate!,
-            ),
-          );
+        CreateGoal(
+          uid: authState.user.uid,
+          title: title,
+          targetAmount: amount,
+          goalType: _goalType,
+          targetDate: _targetDate!,
+        ),
+      );
     }
   }
 
@@ -59,9 +59,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
           if (state is GoalsLoaded) {
             context.pop(); // Go back on success
           } else if (state is GoalsFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Padding(
@@ -76,7 +76,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Target Amount',
                   prefixText: '\$ ',
@@ -100,16 +102,20 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                title: Text(_targetDate == null
-                    ? 'Select Target Date'
-                    : 'Target: ${_targetDate!.toLocal().toString().split(' ')[0]}'),
+                title: Text(
+                  _targetDate == null
+                      ? 'Select Target Date'
+                      : 'Target: ${_targetDate!.toLocal().toString().split(' ')[0]}',
+                ),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () async {
                   final date = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now().add(const Duration(days: 30)),
                     firstDate: DateTime.now().add(const Duration(days: 1)),
-                    lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
+                    lastDate: DateTime.now().add(
+                      const Duration(days: 365 * 10),
+                    ),
                   );
                   if (date != null) {
                     setState(() {

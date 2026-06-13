@@ -8,13 +8,16 @@ import '../entities/deposit_entity.dart';
 import '../repositories/savings_repository.dart';
 
 @injectable
-class CreateDepositUseCase implements UseCase<DepositEntity, CreateDepositParams> {
+class CreateDepositUseCase
+    implements UseCase<DepositEntity, CreateDepositParams> {
   final SavingsRepository repository;
 
   CreateDepositUseCase(this.repository);
 
   @override
-  Future<Either<Failure, DepositEntity>> call(CreateDepositParams params) async {
+  Future<Either<Failure, DepositEntity>> call(
+    CreateDepositParams params,
+  ) async {
     return await repository.createDeposit(
       uid: params.uid,
       amount: params.amount,

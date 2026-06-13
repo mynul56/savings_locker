@@ -16,17 +16,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<Map<String, dynamic>> _pages = [
     {
       'title': 'Save money\nwith purpose',
-      'subtitle': 'Set up dedicated goals and watch your savings grow seamlessly over time.',
+      'subtitle':
+          'Set up dedicated goals and watch your savings grow seamlessly over time.',
       'icon': LucideIcons.target,
     },
     {
       'title': 'Lock savings\nsecurely',
-      'subtitle': 'Resist the urge to spend. Lock your funds until your chosen maturity date.',
+      'subtitle':
+          'Resist the urge to spend. Lock your funds until your chosen maturity date.',
       'icon': LucideIcons.lock,
     },
     {
       'title': 'Achieve goals\nfaster',
-      'subtitle': 'Take control of your financial future with smart analytics and automated saving.',
+      'subtitle':
+          'Take control of your financial future with smart analytics and automated saving.',
       'icon': LucideIcons.trendingUp,
     },
   ];
@@ -65,7 +68,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _onSkip,
-                child: Text('Skip', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6))),
+                child: Text(
+                  'Skip',
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -145,12 +153,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ElevatedButton(
                     onPressed: _onNext,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Text(_currentPage == _pages.length - 1 ? 'Get Started' : 'Next'),
+                    child: Text(
+                      _currentPage == _pages.length - 1
+                          ? 'Get Started'
+                          : 'Next',
+                    ),
                   ),
                 ],
               ),

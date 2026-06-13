@@ -39,7 +39,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             onPressed: () {
               context.push('/create-goal');
             },
-          )
+          ),
         ],
       ),
       body: BlocBuilder<GoalsBloc, GoalsState>(
@@ -47,11 +47,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
           if (state is GoalsLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is GoalsFailure) {
-            return Center(child: Text(state.message, style: TextStyle(color: colorScheme.error)));
+            return Center(
+              child: Text(
+                state.message,
+                style: TextStyle(color: colorScheme.error),
+              ),
+            );
           } else if (state is GoalsLoaded) {
             if (state.goals.isEmpty) {
               return Center(
-                child: Text('No goals yet. Set a target!', style: theme.textTheme.bodyLarge),
+                child: Text(
+                  'No goals yet. Set a target!',
+                  style: theme.textTheme.bodyLarge,
+                ),
               );
             }
             return ListView.builder(
@@ -72,7 +80,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
   Widget _buildGoalCard(BuildContext context, GoalEntity goal) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -91,18 +99,27 @@ class _GoalsScreenState extends State<GoalsScreen> {
                         color: colorScheme.tertiary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(LucideIcons.target, color: colorScheme.tertiary),
+                      child: Icon(
+                        LucideIcons.target,
+                        color: colorScheme.tertiary,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       goal.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
                 Text(
                   '${(goal.completionPercentage * 100).toStringAsFixed(0)}%',
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.tertiary),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.tertiary,
+                  ),
                 ),
               ],
             ),
@@ -123,10 +140,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   children: [
                     Text(
                       'Saved',
-                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
-                      NumberFormat.currency(symbol: '\$').format(goal.currentAmount),
+                      NumberFormat.currency(
+                        symbol: '\$',
+                      ).format(goal.currentAmount),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -136,10 +158,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   children: [
                     Text(
                       'Target',
-                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
-                      NumberFormat.currency(symbol: '\$').format(goal.targetAmount),
+                      NumberFormat.currency(
+                        symbol: '\$',
+                      ).format(goal.targetAmount),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -152,11 +179,17 @@ class _GoalsScreenState extends State<GoalsScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(LucideIcons.calendar, size: 16, color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                    Icon(
+                      LucideIcons.calendar,
+                      size: 16,
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       '${goal.daysRemaining} days left',
-                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                     ),
                   ],
                 ),

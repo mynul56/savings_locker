@@ -33,7 +33,9 @@ class SavingsRemoteDataSourceImpl implements SavingsRemoteDataSource {
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => DepositModel.fromJson(doc.data())).toList();
+      return snapshot.docs
+          .map((doc) => DepositModel.fromJson(doc.data()))
+          .toList();
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -99,7 +101,9 @@ class SavingsRemoteDataSourceImpl implements SavingsRemoteDataSource {
       }
 
       if (!deposit.canWithdraw) {
-        throw const ServerException('Deposit is locked and cannot be withdrawn yet.');
+        throw const ServerException(
+          'Deposit is locked and cannot be withdrawn yet.',
+        );
       }
 
       if (deposit.status == 'withdrawn') {
@@ -115,7 +119,8 @@ class SavingsRemoteDataSourceImpl implements SavingsRemoteDataSource {
         'ownerUid': uid,
         'type': 'withdrawal',
         'amount': deposit.amount,
-        'description': 'Withdrawal from ${deposit.isLocked ? "Locked" : "Flexible"} Savings',
+        'description':
+            'Withdrawal from ${deposit.isLocked ? "Locked" : "Flexible"} Savings',
         'createdAt': DateTime.now().toIso8601String(),
       });
     } catch (e) {
