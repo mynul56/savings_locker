@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/authentication/presentation/screens/splash_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
 import '../../features/authentication/presentation/screens/onboarding_screen.dart';
 import '../../features/authentication/presentation/screens/signup_screen.dart';
@@ -40,21 +41,28 @@ class AppRouter {
   static GoRouter createRouter(AuthenticationBloc authBloc) {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: '/',
+      initialLocation: '/splash',
       refreshListenable: GoRouterRefreshStream(authBloc.stream),
       redirect: (context, state) {
         final authState = authBloc.state;
         final isLoggingIn =
             state.matchedLocation == '/login' ||
             state.matchedLocation == '/signup' ||
-            state.matchedLocation == '/';
+            state.matchedLocation == '/onboarding';
+
+        if (authState is AuthenticationInitial || authState is AuthenticationLoading) {
+          // If we are still initializing or loading, keep on splash screen
+          return '/splash';
+        }
 
         if (authState is AuthenticationUnauthenticated) {
-          // If not logged in and not heading to a public route, redirect to login
-          if (!isLoggingIn) return '/login';
+          // If not logged in and not heading to a public route, redirect to onboarding
+          if (!isLoggingIn && state.matchedLocation != '/splash') return '/onboarding';
+          // If coming from splash, go to onboarding
+          if (state.matchedLocation == '/splash') return '/onboarding';
         } else if (authState is AuthenticationAuthenticated) {
-          // If logged in and heading to a public route, redirect to dashboard
-          if (isLoggingIn) return '/dashboard';
+          // If logged in and heading to a public route or splash, redirect to dashboard
+          if (isLoggingIn || state.matchedLocation == '/splash') return '/dashboard';
         }
 
         // Return null for no redirect
@@ -62,7 +70,11 @@ class AppRouter {
       },
       routes: [
         GoRoute(
-          path: '/',
+          path: '/splash',
+          builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/onboarding',
           builder: (context, state) => const OnboardingScreen(),
         ),
         GoRoute(
