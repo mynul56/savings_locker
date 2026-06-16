@@ -1,77 +1,121 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../../../authentication/presentation/bloc/authentication_bloc.dart';
+import '../../../savings/presentation/bloc/savings_bloc.dart';
+import '../../../savings/domain/entities/deposit_entity.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthenticationBloc>().state;
+    if (authState is AuthenticationAuthenticated) {
+      context.read<SavingsBloc>().add(LoadDeposits(authState.user.uid));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<SavingsBloc, SavingsState>(
+      builder: (context, state) {
+        double totalBalance = 0;
+        double flexibleBalance = 0;
+        double lockedBalance = 0;
+        DepositEntity? upcomingMaturity;
+
+        if (state is SavingsLoaded) {
+          final activeDeposits = state.deposits.where((d) => d.status == 'active');
+          for (var deposit in activeDeposits) {
+            totalBalance += deposit.amount;
+            if (deposit.isLocked) {
+              lockedBalance += deposit.amount;
+              // Find the nearest upcoming maturity
+              if (deposit.lockUntil != null) {
+                if (upcomingMaturity == null || deposit.lockUntil!.isBefore(upcomingMaturity.lockUntil!)) {
+                  upcomingMaturity = deposit;
+                }
+              }
+            } else {
+              flexibleBalance += deposit.amount;
+            }
+          }
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Total Balance',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Balance',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          NumberFormat.currency(symbol: '\$').format(totalBalance),
+                          style: theme.textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '\$12,450.00',
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
+                    CircleAvatar(
+                      backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
+                      child: IconButton(
+                        icon: Icon(LucideIcons.bell, color: colorScheme.primary),
+                        onPressed: () => context.push('/notifications'),
                       ),
                     ),
                   ],
                 ),
-                CircleAvatar(
-                  backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
-                  child: IconButton(
-                    icon: Icon(LucideIcons.bell, color: colorScheme.primary),
-                    onPressed: () => context.push('/notifications'),
-                  ),
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildBalanceCard(
+                        context: context,
+                        title: 'Flexible',
+                        amount: NumberFormat.currency(symbol: '\$').format(flexibleBalance),
+                        icon: LucideIcons.wallet,
+                        color: colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildBalanceCard(
+                        context: context,
+                        title: 'Locked',
+                        amount: NumberFormat.currency(symbol: '\$').format(lockedBalance),
+                        icon: LucideIcons.lock,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildBalanceCard(
-                    context: context,
-                    title: 'Flexible',
-                    amount: '\$4,200.00',
-                    icon: LucideIcons.wallet,
-                    color: colorScheme.secondary,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildBalanceCard(
-                    context: context,
-                    title: 'Locked',
-                    amount: '\$8,250.00',
-                    icon: LucideIcons.lock,
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
+                const SizedBox(height: 32),
             Text('Quick Actions', style: theme.textTheme.titleLarge),
             const SizedBox(height: 16),
             Row(
@@ -103,44 +147,52 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Upcoming Maturities', style: theme.textTheme.titleLarge),
-                TextButton(onPressed: () {}, child: const Text('See All')),
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Upcoming Maturities', style: theme.textTheme.titleLarge),
+                    TextButton(onPressed: () {}, child: const Text('See All')),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (upcomingMaturity != null)
+                  Card(
+                    child: ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          LucideIcons.calendarClock,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                      title: const Text(
+                        'Locked Deposit',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text('Unlocks on ${DateFormat.yMMMd().format(upcomingMaturity.lockUntil!)}'),
+                      trailing: Text(
+                        NumberFormat.currency(symbol: '\$').format(upcomingMaturity.amount),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: Text('No upcoming maturities')),
+                  ),
               ],
             ),
-            const SizedBox(height: 16),
-            Card(
-              child: ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    LucideIcons.calendarClock,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                title: const Text(
-                  'Car Downpayment',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: const Text('Unlocks in 14 days'),
-                trailing: Text(
-                  '\$5,000',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
