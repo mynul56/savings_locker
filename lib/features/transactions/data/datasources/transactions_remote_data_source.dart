@@ -20,12 +20,15 @@ class TransactionsRemoteDataSourceImpl implements TransactionsRemoteDataSource {
       final snapshot = await firestore
           .collection('transactions')
           .where('ownerUid', isEqualTo: uid)
-          .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
+      final transactions = snapshot.docs
           .map((doc) => TransactionModel.fromJson(doc.data()))
           .toList();
+          
+      transactions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      
+      return transactions;
     } catch (e) {
       throw ServerException(e.toString());
     }
