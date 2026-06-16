@@ -55,32 +55,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: MediaQuery.removePadding(
               context: context,
               removeBottom: true,
-              child: NavigationBar(
-                height: 72,
-                selectedIndex: _currentIndex,
-                onDestinationSelected: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                backgroundColor: colorScheme.surface.withValues(alpha: 0.7),
-                elevation: 0,
-                indicatorColor: colorScheme.primary.withValues(alpha: 0.15),
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(LucideIcons.layoutDashboard),
-                    label: 'Home',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(LucideIcons.piggyBank),
-                    label: 'Savings',
-                  ),
-                  NavigationDestination(icon: Icon(LucideIcons.target), label: 'Goals'),
-                  NavigationDestination(icon: Icon(LucideIcons.user), label: 'Profile'),
-                ],
+              child: Container(
+                height: 64,
+                color: colorScheme.surface.withValues(alpha: 0.7),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNavItem(context, 0, LucideIcons.layoutDashboard, 'Home', colorScheme),
+                    _buildNavItem(context, 1, LucideIcons.piggyBank, 'Savings', colorScheme),
+                    _buildNavItem(context, 2, LucideIcons.target, 'Goals', colorScheme),
+                    _buildNavItem(context, 3, LucideIcons.user, 'Profile', colorScheme),
+                  ],
+                ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(BuildContext context, int index, IconData icon, String label, ColorScheme colorScheme) {
+    final isSelected = _currentIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 72,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: isSelected ? colorScheme.primary.withValues(alpha: 0.15) : Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                icon,
+                size: 22,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
         ),
       ),
     );

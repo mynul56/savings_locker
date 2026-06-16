@@ -87,11 +87,7 @@ class HomeScreen extends StatelessWidget {
                   context,
                   'Withdraw',
                   LucideIcons.arrowUpFromLine,
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Go to Savings tab to withdraw from specific deposits')),
-                    );
-                  },
+                  () => context.push('/withdraw'),
                 ),
                 _buildActionButton(
                   context, 
@@ -103,11 +99,7 @@ class HomeScreen extends StatelessWidget {
                   context, 
                   'History', 
                   LucideIcons.history,
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Transaction history coming soon')),
-                    );
-                  },
+                  () => context.push('/history'),
                 ),
               ],
             ),
