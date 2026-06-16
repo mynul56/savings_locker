@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
                   child: IconButton(
                     icon: Icon(LucideIcons.bell, color: colorScheme.primary),
-                    onPressed: () {},
+                    onPressed: () => context.push('/notifications'),
                   ),
                 ),
               ],

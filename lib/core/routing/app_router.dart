@@ -15,6 +15,7 @@ import '../../features/profile/presentation/screens/security_settings_screen.dar
 import '../../features/profile/presentation/screens/legal_text_screen.dart';
 import '../../features/transactions/presentation/screens/history_screen.dart';
 import '../../features/savings/presentation/screens/withdraw_screen.dart';
+import '../../features/notifications/presentation/screens/notifications_screen.dart';
 
 import 'dart:async';
 import '../../features/authentication/presentation/bloc/authentication_bloc.dart';
@@ -106,6 +107,10 @@ class AppRouter {
         GoRoute(
           path: '/history',
           builder: (context, state) => const HistoryScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen(),
         ),
         GoRoute(
           path: '/account-settings',
