@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../authentication/presentation/bloc/authentication_bloc.dart';
 
@@ -14,6 +15,29 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  bool _isFaceLockEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFaceLockEnabled = prefs.getBool('isFaceLockEnabled') ?? false;
+    });
+  }
+
+  Future<void> _toggleFaceLock(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFaceLockEnabled', value);
+    setState(() {
+      _isFaceLockEnabled = value;
+    });
+  }
 
   @override
   void dispose() {
@@ -60,6 +84,21 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'App Lock',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Require Face ID / Fingerprint'),
+                  subtitle: const Text('Unlock the app securely using biometrics'),
+                  value: _isFaceLockEnabled,
+                  onChanged: _toggleFaceLock,
+                ),
+                const Divider(height: 48),
                 Text(
                   'Change Password',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
