@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../authentication/presentation/bloc/authentication_bloc.dart';
@@ -17,11 +18,24 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isFaceLockEnabled = false;
+  bool _isBiometricSupported = false;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    final auth = LocalAuthentication();
+    final isSupported = await auth.isDeviceSupported();
+    final canCheck = await auth.canCheckBiometrics;
+    if (mounted) {
+      setState(() {
+        _isBiometricSupported = isSupported || canCheck;
+      });
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -84,21 +98,23 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'App Lock',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                if (_isBiometricSupported) ...[
+                  Text(
+                    'App Lock',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Require Face ID / Fingerprint'),
-                  subtitle: const Text('Unlock the app securely using biometrics'),
-                  value: _isFaceLockEnabled,
-                  onChanged: _toggleFaceLock,
-                ),
-                const Divider(height: 48),
+                  const SizedBox(height: 8),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Require Face ID / Fingerprint'),
+                    subtitle: const Text('Unlock the app securely using biometrics'),
+                    value: _isFaceLockEnabled,
+                    onChanged: _toggleFaceLock,
+                  ),
+                  const Divider(height: 48),
+                ],
                 Text(
                   'Change Password',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

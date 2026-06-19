@@ -26,8 +26,8 @@ void main() async {
 
     // Initialize Firebase App Check for production
     await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.playIntegrity,
-      appleProvider: AppleProvider.deviceCheck,
+      providerAndroid: AndroidPlayIntegrityProvider(),
+      providerApple: AppleDeviceCheckProvider(),
     );
 
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;

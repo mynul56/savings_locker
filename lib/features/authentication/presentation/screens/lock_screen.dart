@@ -34,10 +34,8 @@ class _LockScreenState extends State<LockScreen> {
       });
       authenticated = await auth.authenticate(
         localizedReason: 'Please authenticate to access your secure data',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: false,
-        ),
+        persistAcrossBackgrounding: true,
+        biometricOnly: false,
       );
     } catch (e) {
       setState(() {
