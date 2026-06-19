@@ -5,6 +5,7 @@ import '../../features/authentication/presentation/screens/splash_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
 import '../../features/authentication/presentation/screens/onboarding_screen.dart';
 import '../../features/authentication/presentation/screens/signup_screen.dart';
+import '../../features/authentication/presentation/screens/lock_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/savings/presentation/screens/create_deposit_screen.dart';
 import '../../features/goals/presentation/screens/create_goal_screen.dart';
@@ -64,9 +65,11 @@ class AppRouter {
           if (!isLoggingIn && state.matchedLocation != '/splash') return '/onboarding';
           // If coming from splash, go to onboarding
           if (state.matchedLocation == '/splash') return '/onboarding';
+        } else if (authState is AuthenticationBiometricRequested) {
+          if (state.matchedLocation != '/lock') return '/lock';
         } else if (authState is AuthenticationAuthenticated) {
-          // If logged in and heading to a public route or splash, redirect to dashboard
-          if (isLoggingIn || state.matchedLocation == '/splash') return '/dashboard';
+          // If logged in and heading to a public route or splash or lock, redirect to dashboard
+          if (isLoggingIn || state.matchedLocation == '/splash' || state.matchedLocation == '/lock') return '/dashboard';
         }
 
         // Return null for no redirect
@@ -88,6 +91,10 @@ class AppRouter {
         GoRoute(
           path: '/signup',
           builder: (context, state) => const SignupScreen(),
+        ),
+        GoRoute(
+          path: '/lock',
+          builder: (context, state) => const LockScreen(),
         ),
         GoRoute(
           path: '/dashboard',

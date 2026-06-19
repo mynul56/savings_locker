@@ -61,3 +61,5 @@ class UpdatePasswordRequested extends AuthenticationEvent {
   @override
   List<Object> get props => [currentPassword, newPassword];
 }
+
+class BiometricAuthenticationSuccessful extends AuthenticationEvent {}

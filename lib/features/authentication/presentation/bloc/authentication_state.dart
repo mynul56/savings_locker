@@ -30,3 +30,12 @@ class AuthenticationFailure extends AuthenticationState {
   @override
   List<Object> get props => [message];
 }
+
+class AuthenticationBiometricRequested extends AuthenticationState {
+  final UserEntity user;
+
+  const AuthenticationBiometricRequested(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
