@@ -152,7 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Upcoming Maturities', style: theme.textTheme.titleLarge),
-                    TextButton(onPressed: () {}, child: const Text('See All')),
+                    TextButton(
+                      onPressed: () => context.push('/upcoming-maturities'),
+                      child: const Text('See All'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
