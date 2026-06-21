@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../authentication/presentation/bloc/authentication_bloc.dart';
 import '../bloc/savings_bloc.dart';
+import '../../../../injection_container/injection.dart';
+import '../../data/services/ssl_payment_service.dart';
 
 class CreateDepositScreen extends StatefulWidget {
   const CreateDepositScreen({super.key});
@@ -17,7 +19,7 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
   bool _isLocked = false;
   DateTime? _lockUntil;
 
-  void _onCreate() {
+  void _onCreate() async {
     final amount = double.tryParse(_amountController.text) ?? 0.0;
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -37,14 +39,38 @@ class _CreateDepositScreenState extends State<CreateDepositScreen> {
 
     final authState = context.read<AuthenticationBloc>().state;
     if (authState is AuthenticationAuthenticated) {
-      context.read<SavingsBloc>().add(
-        CreateDeposit(
-          uid: authState.user.uid,
+      final transactionId = "TXN_${DateTime.now().millisecondsSinceEpoch}";
+      final paymentService = sl<SslPaymentService>();
+
+      try {
+        final result = await paymentService.initiatePayment(
           amount: amount,
-          isLocked: _isLocked,
-          lockUntil: _isLocked ? _lockUntil : null,
-        ),
-      );
+          transactionId: transactionId,
+          productCategory: "Savings Deposit",
+        );
+
+        if (result.status?.toLowerCase() == "valid" || result.status?.toLowerCase() == "success" || result.status?.toLowerCase() == "validated") {
+          if (!mounted) return;
+          context.read<SavingsBloc>().add(
+            CreateDeposit(
+              uid: authState.user.uid,
+              amount: amount,
+              isLocked: _isLocked,
+              lockUntil: _isLocked ? _lockUntil : null,
+            ),
+          );
+        } else {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Payment failed or cancelled: ${result.status}')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Payment error: $e')),
+        );
+      }
     }
   }
 
